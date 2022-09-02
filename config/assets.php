@@ -6,7 +6,8 @@ declare(strict_types=1);
  * You can place your custom package configuration in here.
  */
 return [
-    'build_directory' => "build",
+    "provider" => "vite",
+    "build_directory" => "build",
     "script_attributes" => [
         "defer" => true,
         //"referrerpolicy" => "origin"
