@@ -1,0 +1,19 @@
+{
+    "name": "agence-adeliom/lumberjack-assets",
+    "require": {
+        "php": ">=8.0.2",
+        "ext-dom": "*",
+        "rareloop/lumberjack-core": "^5.0",
+        "symfony/web-link": "^5.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Adeliom\\Lumberjack\\Assets\\": "src"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true
+        }
+    }
+}
