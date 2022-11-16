@@ -19,6 +19,7 @@ class Enqueuer
 
         $jses = $assets['js'];
         $csses = $assets['css'];
+
         foreach ($jses as $js) {
             \wp_enqueue_script($js['handle']);
         }
@@ -42,7 +43,6 @@ class Enqueuer
                 \sprintf('Invalid entrypoint "%s"', $entryName)
             );
         }
-
         $entryPointLookup = self::getEntrypointLookup();
         $jsFiles = $entryPointLookup->getJavaScriptFiles($entryName);
         $cssFiles = $entryPointLookup->getCssFiles($entryName);
@@ -94,20 +94,17 @@ class Enqueuer
         $jses = $assets['js'];
         $csses = $assets['css'];
 
-        $deps = [
-            'js' => [],
-            'css' => []
-        ];
+        $deps = [];
 
         foreach ($jses as $js) {
             \wp_register_script(
                 $js['handle'],
                 $js['url'],
-                array_merge($config['deps']['js'], $deps['js']),
+                array_merge($config['deps'], $deps),
                 $config['version'],
                 $config['in_footer']
             );
-            $deps['js'][] = $js['handle'];
+            $deps[] = $js['handle'];
             foreach ($js['attributes'] ?? [] as $attr => $value) {
                 \wp_script_add_data($js['handle'], self::ATTRIB_PREFIX . $attr, $value);
             }
@@ -117,15 +114,16 @@ class Enqueuer
             \wp_register_style(
                 $css['handle'],
                 $css['url'],
-                array_merge($config['deps']['css'], $deps['css']),
+                array_merge($config['deps'], $deps),
                 $config['version'],
                 $config['media']
             );
-            $deps['css'][] = $css['handle'];
+            $deps[] = $css['handle'];
             foreach ($css['attributes'] ?? [] as $attr => $value) {
                 \wp_style_add_data($css['handle'], self::ATTRIB_PREFIX . $attr, $value);
             }
         }
+
         return $assets;
     }
 
@@ -135,10 +133,7 @@ class Enqueuer
             $config,
             [
                 'version' => null,
-                'deps' => [
-                    'js' => [],
-                    'css' => []
-                ],
+                'deps' => [],
                 'in_footer' => true,
                 'media' => 'all',
                 'attributes' => []
@@ -158,8 +153,11 @@ class Enqueuer
         if (!\in_array($type, ['script', 'style'], true)) {
             throw new \InvalidArgumentException('Type has to be either script or style.');
         }
+
         return 'assets_'
-            . sanitize_title($path)
+            . $name
+            . '_'
+            . $path
             . '_'
             . $type;
     }
